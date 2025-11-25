@@ -1,6 +1,5 @@
 body {
-  /* text-align: center;
-  margin: 0 auto; */
+  width: 600px;
 }
 
 h1 {
@@ -10,34 +9,43 @@ h1 {
   border: 1px dotted black;
 }
 
+.gameUpdate {
+  display: flex;
+  justify-content: space-between;
+  color: red;
+}
+
 .puzzle {
   /* display: table-cell; */
-
+  background: grey;
+  position: relative;
   /* background-repeat: no-repeat; */
   /* background-size: cover; */
   display: grid;
-  grid-template-columns: repeat(3, 200px);
-  grid-template-rows: repeat(3, 200px);
+  /* grid-template-columns: repeat(3, 200px);
+  grid-template-rows: repeat(3, 200px); */
+
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
 
   border: 3px solid black;
+  border-radius: 2%;
 
   width: 600px;
   height: 600px;
-
-  /* transition: grid-column 5s ease, grid-row 5s ease; */
-  /* transition: reflow 5s ease-in-out; */
-  transition: 2s;
 }
 
 .tile {
   background-image: url("samplePic.jpg");
-
-  width: 198px;
-  height: 198px;
+  /* position: absolute; */
+  /* width: 198px;
+  height: 198px; */
   border: 1px solid blue;
+  border-radius: 5%;
   text-align: center;
   cursor: pointer;
   color: transparent;
+  transition: transform 0.25s ease;
 }
 
 #tile_1 {
@@ -71,11 +79,12 @@ h1 {
 
 #tile_e {
   background: white;
+  z-index: -1;
 }
 
 .grid {
   /* transition: grid-column 5s ease, grid-row 5s ease; */
-  transition: reflow 5s ease-in-out;
+  /* transition: reflow 5s ease-in-out; */
 }
 
 /* .grid_2 {
@@ -87,3 +96,18 @@ h1 {
   grid-column: 2/3;
   grid-row: 1/2;
 } */
+
+.translateDown {
+  transform: translateY(200px);
+}
+
+.translateUp {
+  transform: translateY(-200px);
+}
+.translateRight {
+  transform: translateX(200px);
+}
+
+.translateLeft {
+  transform: translateX(-200px);
+}
