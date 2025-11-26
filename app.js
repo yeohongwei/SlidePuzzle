@@ -1,100 +1,57 @@
+/*-------------------------------- Constants --------------------------------*/
 const rowSize = 3;
 const numOfTiles = rowSize * rowSize;
 const emptyTile = "e";
+/*---------------------------- Variables (state) ----------------------------*/
 let count = 0;
 let winner;
 let tileArrangement = [];
 let emptyTilePos;
 let animationRunning = false;
-// let tileIndex;
-
+/*------------------------ Cached Element References ------------------------*/
 const puzzle = document.querySelector(".puzzle");
 const countDisplay = document.getElementById("count");
 const messageDisplay = document.getElementById("message");
 const playGameButton = document.querySelector(".play");
+const toggleNumber = document.querySelector(".numbering");
+/*-------------------------------- Functions --------------------------------*/
 
-// board.addEventListener("click", transitgrid);
-
-// function playTile(tileLocation) {
-//   if (
-//     // Check that tile is either top, bottom, left or right of empty tile, else nothing happens. Take care of boundary cases
-//     tileLocation - rowSize === emptyTilePos ||
-//     tileLocation + rowSize === emptyTilePos ||
-//     (tileLocation - 1 === emptyTilePos && tileLocation % rowSize !== 1) ||
-//     (tileLocation + 1 === emptyTilePos && tileLocation % rowSize !== 0)
-//   ) {
-//     // Update array and all other variables
-//     tileArrangement[emptyTilePos - 1] = tileArrangement[tileLocation - 1];
-//     emptyTilePos = tileLocation;
-//     tileArrangement[tileLocation - 1] = emptyTile;
-//     count++;
-
-//     updateCountDisplay();
-//     updatePuzzle();
-//     winner = checkSolved();
-//   }
-// }
-
-function playTile(tileLocation) {
-  if (tileLocation - rowSize === emptyTilePos) {
-    animateMove(tileLocation, "Up");
-  } else if (tileLocation + rowSize === emptyTilePos) {
-    animateMove(tileLocation, "Down");
-  } else if (
-    tileLocation - 1 === emptyTilePos &&
-    tileLocation % rowSize !== 1
-  ) {
-    animateMove(tileLocation, "Left");
-  } else if (
-    tileLocation + 1 === emptyTilePos &&
-    tileLocation % rowSize !== 0
-  ) {
-    animateMove(tileLocation, "Right");
+function init() {
+  count = 0;
+  tileArrangement = [];
+  for (let i = 0; i < numOfTiles - 1; i++) {
+    tileArrangement.push(i + 1);
   }
+  tileArrangement.push(emptyTile); //empty tile
+  emptyTilePos = numOfTiles;
+  winner = false;
+  updateCountDisplay();
+  UpdateMessageDisplay();
 }
-// This moves two tiles, the tile of play and the empty tile
-function animateMove(tileLocation, action) {
-  const tileNumber = tileArrangement[tileLocation - 1];
-  const tileElement = document.getElementById("tile_" + tileNumber);
-  if (!tileNumber) {
-    return;
+
+function UpdateMessageDisplay(message = "") {
+  messageDisplay.innerText = message;
+  if (message) {
+    messageDisplay.classList.add("blinking-text");
   } else {
-    animationRunning = true;
+    messageDisplay.classList.remove("blinking-text");
   }
-  switch (action) {
-    case "Down":
-      tileElement.style.transform = "translateY(200px)";
-      break;
-    case "Up":
-      tileElement.style.transform = "translateY(-200px)";
-      break;
-    case "Left":
-      tileElement.style.transform = "translateX(-200px)";
-      break;
-    case "Right":
-      tileElement.style.transform = "translateX(200px)";
-      break;
-  }
-  count++;
-  tileElement.addEventListener(
-    "transitionend",
-    () => {
-      // Update array and all other variables
-      tileElement.style.transform = "";
-      tileArrangement[emptyTilePos - 1] = tileArrangement[tileLocation - 1];
-      emptyTilePos = tileLocation;
-      tileArrangement[tileLocation - 1] = emptyTile;
-      animationRunning = false;
-
-      updateCountDisplay();
-      updatePuzzle();
-      winner = checkSolved();
-    },
-    { once: true }
-  );
 }
 
-function scramble() {
+function updatePuzzle() {
+  let updatedId;
+  for (let i = 0; i < numOfTiles; i++) {
+    updatedId = "tile_" + tileArrangement[i];
+    puzzle.children[i].setAttribute("id", updatedId);
+    puzzle.children[i].textContent = tileArrangement[i];
+  }
+}
+
+function updateCountDisplay() {
+  countDisplay.innerText = count;
+}
+
+function shuffle() {
   for (let i = 0; i < tileArrangement.length; i++) {
     const j = Math.floor(Math.random() * numOfTiles);
     const temp = tileArrangement[i];
@@ -146,36 +103,6 @@ function swapArrElement(index1, index2) {
   tileArrangement[index2] = temp;
 }
 
-function init() {
-  count = 0;
-  tileArrangement = [];
-  for (let i = 0; i < numOfTiles - 1; i++) {
-    tileArrangement.push(i + 1);
-  }
-  tileArrangement.push(emptyTile); //empty tile
-  emptyTilePos = numOfTiles;
-  winner = false;
-  updateCountDisplay();
-  UpdateMessageDisplay();
-}
-
-function UpdateMessageDisplay(message = "") {
-  messageDisplay.innerText = message;
-}
-
-function updatePuzzle() {
-  let updatedId;
-  for (let i = 0; i < numOfTiles; i++) {
-    updatedId = "tile_" + tileArrangement[i];
-    puzzle.children[i].setAttribute("id", updatedId);
-    puzzle.children[i].textContent = tileArrangement[i];
-  }
-}
-
-function updateCountDisplay() {
-  countDisplay.innerText = count;
-}
-
 function playMove(event) {
   if (winner || animationRunning) {
     return;
@@ -187,12 +114,67 @@ function playMove(event) {
       tileArrangement.findIndex((item) => item === tileIndex) + 1;
     if (tileLocation) {
       playTile(tileLocation);
-      // console.log("Action", sqrLocation.id[5]);
-    } else {
-      // console.log("NULL", tileIndex, tileLocation);
-      // console.log(sqrLocation);
     }
   }
+}
+
+function playTile(tileLocation) {
+  if (tileLocation - rowSize === emptyTilePos) {
+    animateMove(tileLocation, "Up");
+  } else if (tileLocation + rowSize === emptyTilePos) {
+    animateMove(tileLocation, "Down");
+  } else if (
+    tileLocation - 1 === emptyTilePos &&
+    tileLocation % rowSize !== 1
+  ) {
+    animateMove(tileLocation, "Left");
+  } else if (
+    tileLocation + 1 === emptyTilePos &&
+    tileLocation % rowSize !== 0
+  ) {
+    animateMove(tileLocation, "Right");
+  }
+}
+// This moves the tile of play
+function animateMove(tileLocation, action) {
+  const tileNumber = tileArrangement[tileLocation - 1];
+  const tileElement = document.getElementById("tile_" + tileNumber);
+  if (!tileNumber) {
+    return;
+  } else {
+    animationRunning = true;
+  }
+  switch (action) {
+    case "Down":
+      tileElement.style.transform = "translateY(200px)";
+      break;
+    case "Up":
+      tileElement.style.transform = "translateY(-200px)";
+      break;
+    case "Left":
+      tileElement.style.transform = "translateX(-200px)";
+      break;
+    case "Right":
+      tileElement.style.transform = "translateX(200px)";
+      break;
+  }
+  count++;
+  tileElement.addEventListener(
+    "transitionend",
+    () => {
+      // Update array and all other variables
+      tileElement.style.transform = ""; // Clear the transform
+
+      swapArrElement(tileLocation - 1, emptyTilePos - 1);
+      emptyTilePos = tileLocation;
+      animationRunning = false;
+
+      updateCountDisplay();
+      updatePuzzle();
+      winner = checkSolved();
+    },
+    { once: true }
+  );
 }
 
 function checkSolved() {
@@ -204,18 +186,24 @@ function checkSolved() {
   if (tileArrangement[tileArrangement.length - 1] !== emptyTile) {
     return false;
   }
-  UpdateMessageDisplay("You win!");
+  UpdateMessageDisplay("Well done! 🎊");
   return true;
 }
 
-// test = new Audio();
+function showTileNumber() {
+  puzzle.classList.toggle("hide-text");
+}
 
 function start() {
   if (animationRunning) return;
   init();
-  scramble();
+  shuffle();
   updatePuzzle();
 }
 
+/*----------------------------- Event Listeners -----------------------------*/
 puzzle.addEventListener("click", playMove);
 playGameButton.addEventListener("click", start);
+toggleNumber.addEventListener("click", showTileNumber);
+
+start();
