@@ -86,9 +86,9 @@ h1 {
 }
 
 #tile_e {
-  background: white;
+  background-position: bottom right;
   color: transparent;
-  z-index: -1;
+  visibility: hidden;
 }
 
 .hide-text {

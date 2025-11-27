@@ -25,6 +25,7 @@ function init() {
   tileArrangement.push(emptyTile); //empty tile
   emptyTilePos = numOfTiles;
   winner = false;
+
   updateCountDisplay();
   UpdateMessageDisplay();
 }
@@ -164,7 +165,6 @@ function animateMove(tileLocation, action) {
     () => {
       // Update array and all other variables
       tileElement.style.transform = ""; // Clear the transform
-
       swapArrElement(tileLocation - 1, emptyTilePos - 1);
       emptyTilePos = tileLocation;
       animationRunning = false;
@@ -186,7 +186,15 @@ function checkSolved() {
   if (tileArrangement[tileArrangement.length - 1] !== emptyTile) {
     return false;
   }
+
+  // Reveal empty tile after completion
+  setTimeout(() => {
+    const tileEmpty = document.getElementById("tile_e");
+    tileEmpty.style.visibility = "visible";
+  }, 250);
+
   UpdateMessageDisplay("Well done! 🎊");
+
   return true;
 }
 
@@ -196,6 +204,11 @@ function showTileNumber() {
 
 function start() {
   if (animationRunning) return;
+  if (winner) {
+    //Remove visibility of empty tile
+    const tileEmpty = document.getElementById("tile_e");
+    tileEmpty.style.visibility = "";
+  }
   init();
   shuffle();
   updatePuzzle();
